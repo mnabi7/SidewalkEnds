@@ -44,10 +44,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         }
 
-    private String getDirectionsUrl(LatLng origin,LatLng dest){
-
+    private String getDirectionsUrl(){
+        LatLng origin = markerPoints.get(0);
+        LatLng dest = markerPoints.get(markerPoints.size()-1);
         // Origin of route
-        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+        String str_origin = "origin="+ origin.latitude+","+origin.longitude;
 
         // Destination of route
         String str_dest = "destination="+dest.latitude+","+dest.longitude;
@@ -56,14 +57,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         String sensor = "sensor=false";
 
         // Waypoints
-        String waypoints = "";
+        String waypoints = "waypoints=optimize:true";
 
-        for(int i=2;i<markerPoints.size();i++)
+        for(int i=0;i<markerPoints.size();i++)
         {
             LatLng point  = (LatLng) markerPoints.get(i);
-            if(i==2)
-                waypoints = "waypoints=";
-            waypoints += point.latitude + "," + point.longitude + "|";
+            waypoints += "|" +point.latitude + "," + point.longitude ;
         }
 
 
@@ -74,7 +73,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters +"&key=" + "AIzaSyCjMDiqSdfTOnLZpUF4y4zK78XOThReaAk";
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters +"&mode=walking&key=" + "AIzaSyCjMDiqSdfTOnLZpUF4y4zK78XOThReaAk";
 
 
         return url;
@@ -171,10 +170,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng point) {
 
                 // Already two locations
-                if (markerPoints.size() > 1) {
-                    markerPoints.clear();
-                    mMap.clear();
-                }
+//                if (markerPoints.size() > 1) {
+//                    markerPoints.clear();
+//                    mMap.clear();
+//                }
 
                 // Adding new item to the ArrayList
                 markerPoints.add(point);
@@ -191,32 +190,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                  */
                 if (markerPoints.size() == 1) {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                } else if (markerPoints.size() == 2) {
+                } else {
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 }
 
 
                 // Add new marker to the Google Map Android API V2
                 mMap.addMarker(options);
+                LatLng origin = markerPoints.get(0);
 
                 // Checks, whether start and end locations are captured
-                if (markerPoints.size() >= 2) {
-                    LatLng origin = markerPoints.get(0);
-                    LatLng dest = markerPoints.get(1);
+//                if (markerPoints.size() >= 2) {
+//                    LatLng origin = markerPoints.get(0);
+//                    LatLng dest = markerPoints.get(1);
 
                     // Getting URL to the Google Directions API
-                    String url = getDirectionsUrl(origin, dest);
+                    String url = getDirectionsUrl();
                     Log.d("onMapClick", url.toString());
                     FetchUrl FetchUrl = new FetchUrl();
 
                     // Start downloading json data from Google Directions API
                     FetchUrl.execute(url);
                     //move map camera
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
+                   // mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
                     //mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
                 }
-
-            }
         });
 //
 //        // Add a marker in Sydney and move the camera
