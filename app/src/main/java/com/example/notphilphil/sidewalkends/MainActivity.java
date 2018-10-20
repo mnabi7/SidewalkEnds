@@ -3,8 +3,10 @@ package com.example.notphilphil.sidewalkends;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -163,6 +165,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        FloatingActionButton done = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                markerPoints.clear();
+                mMap.clear();
+            }
+        });
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
